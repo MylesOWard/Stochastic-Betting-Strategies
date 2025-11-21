@@ -1,6 +1,11 @@
-from rng import roulette_like_trial
+from rng import roulette_like_trial, set_seed
 
-def run_simulation(strategy_fn, initial_funds, stake, n_rounds, n_bettors, p_win=0.49, **kwargs):
+def run_simulation(strategy_fn, initial_funds, stake, n_rounds,
+                   n_bettors, p_win=0.49, seed=None, **kwargs):
+    
+    if seed is not None:
+        set_seed(seed)
+
     final_values = []
     broke_count = 0
 
@@ -9,6 +14,8 @@ def run_simulation(strategy_fn, initial_funds, stake, n_rounds, n_bettors, p_win
 
     for i in range(n_bettors):
         wagers, values = strategy_fn(initial_funds, stake, n_rounds, rng, **kwargs)
+
+        # Final bankroll for this bettor
         if len(values) == 0:
             final = initial_funds
         else:
@@ -20,3 +27,4 @@ def run_simulation(strategy_fn, initial_funds, stake, n_rounds, n_bettors, p_win
             broke_count += 1
 
     return final_values, broke_count
+
